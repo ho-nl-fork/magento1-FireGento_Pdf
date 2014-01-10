@@ -49,6 +49,14 @@
                     </firegento_pdf>
                 </observers>
             </firegento_pdf_invoice_insert_note>
+			<firegento_pdf_creditmemo_insert_note>
+				<observers>
+					<firegento_pdf>
+						<class>firegento_pdf/observer</class>
+						<method>addCreditmemoNotes</method>
+					</firegento_pdf>
+				</observers>
+			</firegento_pdf_creditmemo_insert_note>
         </events>
         <pdf>
             <!-- fix totals order -->
