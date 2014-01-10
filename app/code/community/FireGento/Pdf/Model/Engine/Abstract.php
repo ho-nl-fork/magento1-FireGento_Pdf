@@ -368,7 +368,8 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
         if ($putPaymentMethod) {
             $page->drawText(Mage::helper('firegento_pdf')->__('Payment method:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
             $paymentMethodArray = $this->_prepareText($order->getPayment()->getMethodInstance()->getTitle(), $page, $font, 10, $width);
-            $page->drawText(array_shift($paymentMethodArray), ($this->margin['right'] - $valueRightOffset - $width), $this->y, $this->encoding);
+			$firstPaymentMethodString = array_shift($paymentMethodArray);
+			$page->drawText($firstPaymentMethodString, ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($firstPaymentMethodString, $font, 10)), $this->y, $this->encoding);
             $this->Ln();
             $numberOfLines++;
             $paymentMethodArray = $this->_prepareText(implode(" ", $paymentMethodArray), $page, $font, 10, 2 * $width);
