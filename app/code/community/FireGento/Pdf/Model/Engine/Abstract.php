@@ -264,6 +264,23 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
     }
 
     /**
+     * Insert shipping address
+     *
+     * @param object $page Current page object of Zend_Pdf
+     * @param object $order Order object
+     * @return void
+     */
+    protected function insertShippingAddress(&$page, $order)
+    {
+        $this->_setFontRegular($page, 9);
+        $billing = $this->_formatAddress($order->getShippingAddress()->format('pdf'));
+        foreach ($billing as $line) {
+            $page->drawText(trim(strip_tags($line)), $this->margin['left'], $this->y, $this->encoding);
+            $this->Ln(12);
+        }
+    }
+
+    /**
      * Insert Header
      *
      * @param Zend_Pdf_Page $page Current page object of Zend_Pdf

@@ -73,8 +73,29 @@ class FireGento_Pdf_Model_Engine_Invoice_Default extends FireGento_Pdf_Model_Eng
             $this->insertLogo($page, $invoice->getStore());
 
             /* add billing address */
-            $this->y = 692;
+            $showShipping = Mage::getStoreConfig('sales_pdf/invoice/show_shipping_address');
+            $this->y = $showShipping ? 727 : 692;
+            if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
+                $this->y = $showShipping ? 740 : 705;
+                $this->_setFontBold($page);
+                $page->drawText(Mage::helper('firegento_pdf')->__('Invoice Address:'), $this->margin['left'], $this->y, $this->encoding);
+                $this->y = $showShipping ? 727 : 692;
+                $this->_setFontRegular($page);
+            }
             $this->insertBillingAddress($page, $order);
+
+            /* Add shipping address */
+            if ($showShipping) {
+                $this->y = 660;
+                if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
+                    $this->y = 667;
+                    $this->_setFontBold($page);
+                    $page->drawText(Mage::helper('firegento_pdf')->__('Shipping Address:'), $this->margin['left'], $this->y, $this->encoding);
+                    $this->y = 654;
+                    $this->_setFontRegular($page);
+                }
+                $this->insertShippingAddress($page, $order);
+            }
 
             // Add sender address
             $this->y = 705;
