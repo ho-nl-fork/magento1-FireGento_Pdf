@@ -74,24 +74,24 @@ class FireGento_Pdf_Model_Engine_Invoice_Default extends FireGento_Pdf_Model_Eng
 
             /* add billing address */
             $showShipping = Mage::getStoreConfig('sales_pdf/invoice/show_shipping_address');
-            $this->y = $showShipping ? 767 : 692;
+            $this->y = 692;
             if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
-                $this->y = $showShipping ? 780 : 705;
+                $this->y = 705;
                 $this->_setFontBold($page, 9);
                 $page->drawText(Mage::helper('firegento_pdf')->__('Billing address:'), $this->margin['left'], $this->y, $this->encoding);
-                $this->y = $showShipping ? 767 : 692;
+                $this->y = 692;
                 $this->_setFontRegular($page);
             }
             $this->insertBillingAddress($page, $order);
 
             /* Add shipping address */
             if ($showShipping) {
-                $this->y = 680;
+                $this->y = 780;
                 if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
-                    $this->y = 687;
+                    $this->y = 793;
                     $this->_setFontBold($page, 9);
-                    $page->drawText(Mage::helper('firegento_pdf')->__('Shipping address:'), $this->margin['left'], $this->y, $this->encoding);
-                    $this->y = 674;
+                    $page->drawText(Mage::helper('firegento_pdf')->__('Shipping address:'), $this->margin['left'] + 300, $this->y, $this->encoding);
+                    $this->y = 780;
                     $this->_setFontRegular($page);
                 }
                 $this->insertShippingAddress($page, $order);
