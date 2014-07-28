@@ -140,6 +140,13 @@ class FireGento_Pdf_Model_Engine_Shipment_Default extends FireGento_Pdf_Model_En
 
     protected function insertShippingAddress(&$page, $order)
     {
+        if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
+            $this->y += 13;
+            $this->_setFontBold($page, 9);
+            $page->drawText(Mage::helper('firegento_pdf')->__('Billing address:'), $this->margin['left'], $this->y, $this->encoding);
+            $this->y -= 13;
+        }
+
         $this->_setFontRegular($page, 9);
 
         $billing = $this->_formatAddress($order->getShippingAddress()->format('pdf'));
