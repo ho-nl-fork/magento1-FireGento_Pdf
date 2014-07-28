@@ -668,7 +668,7 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
             'register_number' => Mage::helper('firegento_pdf')->__('Register number:'),
             'ceo' => Mage::helper('firegento_pdf')->__('CEO:')
         );
-        $this->_insertFooterBlock($page, $fields, 355, 60, $this->margin['right'] - 365 - 10);
+        $this->_insertFooterBlock($page, $fields, 385, 60, $this->margin['right'] - 365 - 10);
     }
 
     /**
