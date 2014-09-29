@@ -281,13 +281,13 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
         if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
             $this->y += 13;
             $this->_setFontBold($page, 9);
-            $page->drawText(Mage::helper('firegento_pdf')->__('Shipping address:'), $this->margin['right'] - 180, $this->y, $this->encoding);
+            $page->drawText(Mage::helper('firegento_pdf')->__('Shipping address:'), $this->margin['right'] - 210, $this->y, $this->encoding);
             $this->y -= 13;
         }
         $this->_setFontRegular($page, 9);
         $billing = $this->_formatAddress($order->getShippingAddress()->format('pdf'));
         foreach ($billing as $line) {
-            $page->drawText(trim(strip_tags($line)), $this->margin['right'] - 180, $this->y, $this->encoding);
+            $page->drawText(trim(strip_tags($line)), $this->margin['right'] - 210, $this->y, $this->encoding);
             $this->Ln(12);
         }
     }
@@ -319,12 +319,12 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
 
         $this->_setFontRegular($page);
 
-        $this->y += 112;
-        $labelRightOffset = 180;
+        $this->y += Mage::getStoreConfig('sales_pdf/invoice/show_shipping_address') ? 64 : 112;
+        $labelRightOffset = 210;
 
         $valueRightOffset = 10;
         $font = $this->_setFontRegular($page, 10);
-        $width = 80;
+        $width = 110;
         $numberOfLines = 0;
 
 
