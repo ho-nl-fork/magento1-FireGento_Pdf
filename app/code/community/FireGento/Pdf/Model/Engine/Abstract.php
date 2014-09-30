@@ -322,7 +322,7 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
         $this->y += Mage::getStoreConfig('sales_pdf/invoice/show_shipping_address') ? 64 : 112;
         $labelRightOffset = 210;
 
-        $valueRightOffset = 10;
+        $valueRightOffset = 0;
         $font = $this->_setFontRegular($page, 10);
         $width = 110;
         $numberOfLines = 0;
