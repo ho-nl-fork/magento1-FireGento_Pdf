@@ -130,7 +130,7 @@ class FireGento_Pdf_Model_Items_Default extends Mage_Sales_Model_Order_Pdf_Items
 
         // prepare subtotal
         $columns['subtotal'] = array(
-            'text' => $order->formatPriceTxt($item->getPrice() * $item->getQty() * 1),
+            'text' => $order->formatPriceTxt($item->getRowTotal()),
             'align' => 'right',
             'font_size' => $fontSize,
             '_width' => 50
@@ -138,7 +138,7 @@ class FireGento_Pdf_Model_Items_Default extends Mage_Sales_Model_Order_Pdf_Items
 
         // prepare subtotal_incl_tax
         $columns['subtotal_incl_tax'] = array(
-            'text' => $order->formatPriceTxt(($item->getPrice() * $item->getQty() * 1) + $item->getTaxAmount()),
+            'text' => $order->formatPriceTxt($item->getRowTotalInclTax()),
             'align' => 'right',
             'font_size' => $fontSize,
             '_width' => 70
