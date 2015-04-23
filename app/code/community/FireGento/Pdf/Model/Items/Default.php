@@ -49,25 +49,17 @@ class FireGento_Pdf_Model_Items_Default extends Mage_Sales_Model_Order_Pdf_Items
 
         $fontSize = 9;
 
-        // draw Position Number
-        $lines[0] = array(array(
-            'text' => $position,
-            'feed' => $pdf->margin['left'] + 10,
-            'align' => 'right',
-            'font_size' => $fontSize
-        ));
-
         // draw SKU
         $lines[0][] = array(
             'text' => Mage::helper('core/string')->str_split($this->getSku($item), 19),
-            'feed' => $pdf->margin['left'] + 25,
+            'feed' => $pdf->margin['left'] + 3,
             'font_size' => $fontSize,
         );
 
         // draw Product name
         $lines[0][] = array(
             'text' => Mage::helper('core/string')->str_split($item->getName(), 40, true, true),
-            'feed' => $pdf->margin['left'] + 130,
+            'feed' => $pdf->margin['left'] + 108,
             'font_size' => $fontSize
         );
 
@@ -82,7 +74,7 @@ class FireGento_Pdf_Model_Items_Default extends Mage_Sales_Model_Order_Pdf_Items
                 $optionArray = $pdf->_prepareText($optionText, $page, $pdf->getFontRegular(), $fontSize, 215);
                 $lines[][] = array(
                     'text' => $optionArray,
-                    'feed' => $pdf->margin['left'] + 135
+                    'feed' => $pdf->margin['left'] + 113
                 );
             }
         }

@@ -62,7 +62,7 @@
             <!-- fix totals order -->
             <totals>
                 <tax>
-                    <sort_order>650</sort_order>
+                    <sort_order>750</sort_order>
                 </tax>
             </totals>
         </pdf>

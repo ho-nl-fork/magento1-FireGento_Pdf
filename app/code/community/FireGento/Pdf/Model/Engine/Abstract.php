@@ -556,7 +556,11 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
             $total->setOrder($order)->setSource($source);
 
             if ($total->canDisplay()) {
-                $total->setFontSize(10);
+                if ($total instanceof Mage_Tax_Model_Sales_Pdf_Tax) {
+                    $total->setFontSize(8);
+                } else {
+                    $total->setFontSize(10);
+                }
                 foreach ($total->getTotalsForDisplay() as $totalData) {
                     $lineBlock['lines'][] = array(
                         array(
