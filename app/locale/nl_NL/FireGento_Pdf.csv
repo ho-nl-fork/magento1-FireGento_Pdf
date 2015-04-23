@@ -25,7 +25,7 @@
 "Pos","Pos."
 "No.","Artikelnummer"
 "Description","Omschrijving"
-"Price (excl. tax)","Prijs (Incl. BTW)"
+"Price (excl. tax)","Prijs (Ex. BTW)"
 "Amount","Bedrag"
 "Tax","BTW"
 "Total","Totaal"
@@ -73,10 +73,10 @@
 "You get a discount of %s.","U krijg een korting van %s."
 "Tax amount",BTW-bedrag
 "Price (incl. tax)","Prijs (Inc BTW)"
-"Subtotal (incl. tax)","Subtotaal (Excl. BTW)"
+"Subtotal (incl. tax)","Subtotaal (Ex BTW)"
 "Order of price columns of items","Volgorde van de prijs-kolommen van items"
 "Define the order by moving the following items using your mouse:","Stel de volgorde in door deze met uw muis te verslepen"
 "Tax rate",BTW-bedrag
-"Total (incl. tax)","Totaal (Ex BTW)"
+"Total (incl. tax)","Totaal (Inc BTW)"
 "Show Date Notice","Toon datumopmerking"
 "Show Notice: Invoice date is equal to delivery date.","Toon opmerking: Factuurdatum is gelijk aan de verzending."
