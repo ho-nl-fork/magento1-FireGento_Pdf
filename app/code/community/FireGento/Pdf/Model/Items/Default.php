@@ -101,7 +101,7 @@ class FireGento_Pdf_Model_Items_Default extends Mage_Sales_Model_Order_Pdf_Items
             'text' => $order->formatPriceTxt($item->getPriceInclTax()),
             'align' => 'right',
             'font_size' => $fontSize,
-            '_width' => 60
+            '_width' => 70
         );
 
         // prepare tax
@@ -133,7 +133,7 @@ class FireGento_Pdf_Model_Items_Default extends Mage_Sales_Model_Order_Pdf_Items
             'text' => $order->formatPriceTxt($item->getRowTotalInclTax()),
             'align' => 'right',
             'font_size' => $fontSize,
-            '_width' => 70
+            '_width' => 80
         );
 
         // draw columns in specified order
