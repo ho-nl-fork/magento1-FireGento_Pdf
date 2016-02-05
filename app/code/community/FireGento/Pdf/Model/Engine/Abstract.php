@@ -296,7 +296,7 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
      * Insert Header
      *
      * @param Zend_Pdf_Page $page Current page object of Zend_Pdf
-     * @param object $order Order object
+     * @param Mage_Sales_Model_Order $order Order object
      * @param object $document Document object
      * @return void
      */
@@ -426,6 +426,20 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
             }
 
         }
+
+        // Payment term
+        $page->drawText(Mage::helper('firegento_pdf')->__('Payment term:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
+        $paymentTerm = Mage::getModel('customer/customer')->load($order->getCustomerId())->getPaymentTerm();
+        if ($paymentTerm === null) {
+            $paymentTerm = 'None';
+        } else {
+            $paymentTerm = Mage::helper('firegento_pdf')->__('%s day(s)', $paymentTerm);
+        }
+        $font = $this->_setFontRegular($page, 10);
+        $page->drawText($paymentTerm, ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($paymentTerm, $font, 10)), $this->y, $this->encoding);
+        $this->Ln();
+        $numberOfLines++;
+
         $this->y -= ($numberOfLines*2);
     }
 
