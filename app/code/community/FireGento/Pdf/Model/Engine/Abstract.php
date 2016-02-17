@@ -352,6 +352,14 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
             $numberOfLines++;
         }
 
+        // Purchase Order Number
+        if ($order->getPurchaseOrder()) {
+            $page->drawText(Mage::helper('firegento_pdf')->__('Customer PO number:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
+            $page->drawText($order->getPurchaseOrder(), ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($putOrderId, $font, 10)), $this->y, $this->encoding);
+            $this->Ln();
+            $numberOfLines++;
+        }
+
         // Customer Number
         $page->drawText(Mage::helper('firegento_pdf')->__('Customer number:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
         $numberOfLines++;
