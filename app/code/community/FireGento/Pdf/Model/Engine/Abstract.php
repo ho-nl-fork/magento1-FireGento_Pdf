@@ -250,7 +250,7 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
      * Insert billing address
      *
      * @param object $page Current page object of Zend_Pdf
-     * @param object $order Order object
+     * @param Mage_Sales_Model_Order $order Order object
      * @return void
      */
     protected function insertBillingAddress(&$page, $order)
@@ -263,8 +263,22 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
         }
         $this->_setFontRegular($page, 9);
         $billing = $this->_formatAddress($order->getBillingAddress()->format('pdf'));
+        $alreadyPrintedVat = false;
         foreach ($billing as $line) {
+            $alreadyPrintedVat = preg_match('/^\s*VAT/', $line) === 1;
             $page->drawText(trim(strip_tags($line)), $this->margin['left'], $this->y, $this->encoding);
+            $this->Ln(12);
+        }
+
+        // Add VAT number, if one is available and wasn't already printed
+        $vatId = false;
+        if ($order->getBillingAddress()->getVatId()) {
+            $vatId = $order->getBillingAddress()->getVatId();
+        } elseif ($order->getCustomerTaxvat()) {
+            $vatId = $order->getBillingAddress()->getVatId();
+        }
+        if (!$alreadyPrintedVat && $vatId) {
+            $page->drawText('VAT: ' . trim(strip_tags($vatId)), $this->margin['left'], $this->y, $this->encoding);
             $this->Ln(12);
         }
     }
@@ -286,8 +300,21 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
         }
         $this->_setFontRegular($page, 9);
         $billing = $this->_formatAddress($order->getShippingAddress()->format('pdf'));
+        $alreadyPrintedVat = false;
         foreach ($billing as $line) {
+            $alreadyPrintedVat = preg_match('/^\s*VAT/', $line) === 1;
             $page->drawText(trim(strip_tags($line)), $this->margin['right'] - 210, $this->y, $this->encoding);
+            $this->Ln(12);
+        }
+        // Add VAT number, if one is available and wasn't already printed
+        $vatId = false;
+        if ($order->getShippingAddress()->getVatId()) {
+            $vatId = $order->getBillingAddress()->getVatId();
+        } elseif ($order->getCustomerTaxvat()) {
+            $vatId = $order->getBillingAddress()->getVatId();
+        }
+        if (!$alreadyPrintedVat && $vatId) {
+            $page->drawText('VAT: ' . trim(strip_tags($vatId)), $this->margin['left'], $this->y, $this->encoding);
             $this->Ln(12);
         }
     }
