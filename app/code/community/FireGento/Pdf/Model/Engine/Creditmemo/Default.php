@@ -144,20 +144,20 @@ class FireGento_Pdf_Model_Engine_Creditmemo_Default extends FireGento_Pdf_Model_
         $font = $this->_setFontRegular($page, 9);
 
         $this->y -= 11;
-        $page->drawText(Mage::helper('firegento_pdf')->__('Pos'),             $this->margin['left'] + 3,         $this->y, $this->encoding);
-        $page->drawText(Mage::helper('firegento_pdf')->__('No.'),             $this->margin['left'] + 25,     $this->y, $this->encoding);
-        $page->drawText(Mage::helper('firegento_pdf')->__('Description'),     $this->margin['left'] + 120,     $this->y, $this->encoding);
+        $page->drawText(Mage::helper('firegento_pdf')->__('No.'), $this->margin['left'] + 3, $this->y, $this->encoding);
+        $page->drawText(Mage::helper('firegento_pdf')->__('Description'), $this->margin['left'] + 108, $this->y, $this->encoding);
+
+        $qtyLabel = Mage::helper('firegento_pdf')->__('Qty');
+        $page->drawText($qtyLabel, $this->margin['right'] - 200 - $this->widthForStringUsingFontSize($qtyLabel, $font, 9), $this->y, $this->encoding);
 
         $singlePrice = Mage::helper('firegento_pdf')->__('Price (excl. tax)');
-        $page->drawText($singlePrice, $this->margin['right'] - 153 - $this->widthForStringUsingFontSize($singlePrice, $font, 9), 	$this->y, $this->encoding);
-
-        $page->drawText(Mage::helper('firegento_pdf')->__('Qty'),         $this->margin['left'] + 360,     $this->y, $this->encoding);
+        $page->drawText($singlePrice, $this->margin['right'] - 130 - $this->widthForStringUsingFontSize($singlePrice, $font, 9), $this->y, $this->encoding);
 
         $taxLabel = Mage::helper('firegento_pdf')->__('Tax');
-        $page->drawText($taxLabel, $this->margin['right'] - 65 - $this->widthForStringUsingFontSize($taxLabel, $font, 9), $this->y, $this->encoding);
+        $page->drawText($taxLabel, $this->margin['right'] - 50 - $this->widthForStringUsingFontSize($taxLabel, $font, 9), $this->y, $this->encoding);
 
         $totalLabel = Mage::helper('firegento_pdf')->__('Total');
-        $page->drawText($totalLabel, $this->margin['right'] - 10 - $this->widthForStringUsingFontSize($totalLabel, $font, 10),     $this->y, $this->encoding);
+        $page->drawText($totalLabel, $this->margin['right'] - 3 - $this->widthForStringUsingFontSize($totalLabel, $font, 10), $this->y, $this->encoding);
     }
 
     /**
