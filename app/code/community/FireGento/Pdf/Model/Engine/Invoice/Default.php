@@ -158,7 +158,7 @@ class FireGento_Pdf_Model_Engine_Invoice_Default extends FireGento_Pdf_Model_Eng
         $columns = array();
         $columns['price'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Price'),
-            '_width' => 60
+            '_width' => 70
         );
         $columns['price_incl_tax'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Price (incl. tax)'),
@@ -178,7 +178,7 @@ class FireGento_Pdf_Model_Engine_Invoice_Default extends FireGento_Pdf_Model_Eng
         );
         $columns['subtotal'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Total'),
-            '_width' => 50
+            '_width' => 80
         );
         $columns['subtotal_incl_tax'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Total (incl. tax)'),
