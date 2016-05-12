@@ -153,11 +153,11 @@ class FireGento_Pdf_Model_Engine_Creditmemo_Default extends FireGento_Pdf_Model_
         $singlePrice = Mage::helper('firegento_pdf')->__('Price (excl. tax)');
         $page->drawText($singlePrice, $this->margin['right'] - 130 - $this->widthForStringUsingFontSize($singlePrice, $font, 9), $this->y, $this->encoding);
 
-        $taxLabel = Mage::helper('firegento_pdf')->__('Tax');
-        $page->drawText($taxLabel, $this->margin['right'] - 50 - $this->widthForStringUsingFontSize($taxLabel, $font, 9), $this->y, $this->encoding);
-
         $totalLabel = Mage::helper('firegento_pdf')->__('Total');
-        $page->drawText($totalLabel, $this->margin['right'] - 3 - $this->widthForStringUsingFontSize($totalLabel, $font, 10), $this->y, $this->encoding);
+        $page->drawText($totalLabel, $this->margin['right'] - 50 - $this->widthForStringUsingFontSize($totalLabel, $font, 10), $this->y, $this->encoding);
+
+        $taxLabel = Mage::helper('firegento_pdf')->__('Tax');
+        $page->drawText($taxLabel, $this->margin['right'] - 3 - $this->widthForStringUsingFontSize($taxLabel, $font, 9), $this->y, $this->encoding);
     }
 
     /**
