@@ -191,11 +191,21 @@
                             <show_in_store>1</show_in_store>
                             <comment>Printed on every credit memo.</comment>
                         </note>
+                        <role_note translate="label comment">
+                            <label>Role Note</label>
+                            <frontend_model>firegento_pdf/adminhtml_system_config_roleNote</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Possible to override default note, based on user role]]></comment>
+                        </role_note>
 						<show_comments>
 							<label>Show Creditmemo Comments</label>
 							<frontend_type>select</frontend_type>
 							<source_model>adminhtml/system_config_source_yesno</source_model>
-							<sort_order>6</sort_order>
+							<sort_order>15</sort_order>
 							<show_in_default>1</show_in_default>
 							<show_in_website>1</show_in_website>
 							<show_in_store>1</show_in_store>
