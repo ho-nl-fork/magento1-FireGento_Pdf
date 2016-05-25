@@ -643,7 +643,7 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
         $notes = array_merge($notes, $result->getNotes());
 
         // Get free text notes.
-        $note = Mage::getStoreConfig('sales_pdf/' . $this->getMode() . '/note');
+        $note = $this->_getNote($order);
         if (!empty($note)) {
             $tmpNotes = explode("\n", $note);
             $notes = array_merge($notes, $tmpNotes);
@@ -664,6 +664,26 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
             }
         }
         return $page;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @return string
+     */
+    protected function _getNote($order)
+    {
+        $roleNotes = Mage::getStoreConfig('sales_pdf/' . $this->getMode() . '/role_note', $order->getStoreId());
+        $roleNotes = unserialize($roleNotes);
+
+        if (is_array($roleNotes)) {
+            foreach ($roleNotes as $roleNote) {
+                if ($roleNote['role_id'] == $order->getData('created_by_role')) {
+                    return $roleNote['note'];
+                }
+            }
+        }
+
+        return Mage::getStoreConfig('sales_pdf/' . $this->getMode() . '/note');
     }
 
     protected function _addFooter(&$page, $store = null)
