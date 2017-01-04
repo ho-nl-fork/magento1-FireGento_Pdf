@@ -453,17 +453,21 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
         }
 
         // Payment term
-        $page->drawText(Mage::helper('firegento_pdf')->__('Payment term:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
-        $paymentTerm = Mage::getModel('customer/customer')->load($order->getCustomerId())->getPaymentTerm();
-        if ($paymentTerm === null) {
-            $paymentTerm = 'None';
-        } else {
-            $paymentTerm = Mage::helper('firegento_pdf')->__('%s day(s)', $paymentTerm);
+        if (Mage::helper('core')->isModuleEnabled('Ho_MentalSuits')) {
+            $page->drawText(Mage::helper('firegento_pdf')->__('Payment term:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
+
+            if (!is_null($order->getPaymentTerm())) {
+                $paymentTerm = Mage::helper('ho_mentalsuits')->getPaymenttermLabelForDays($order->getPaymentTerm());
+            } else {
+                $paymentTerm = Mage::helper('ho_mentalsuits')->getPaymenttermLabelForDays(
+                    Mage::getModel('customer/customer')->load($order->getCustomerId())->getPaymentTerm()
+                );
+            }
+            $font = $this->_setFontRegular($page, 10);
+            $page->drawText($paymentTerm, ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($paymentTerm, $font, 10)), $this->y, $this->encoding);
+            $this->Ln();
+            $numberOfLines++;
         }
-        $font = $this->_setFontRegular($page, 10);
-        $page->drawText($paymentTerm, ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($paymentTerm, $font, 10)), $this->y, $this->encoding);
-        $this->Ln();
-        $numberOfLines++;
 
         $this->y -= ($numberOfLines*2);
     }
