@@ -278,7 +278,7 @@ abstract class FireGento_Pdf_Model_Engine_Abstract extends Mage_Sales_Model_Orde
             $vatId = $order->getBillingAddress()->getVatId();
         }
         if (!$alreadyPrintedVat && $vatId) {
-            $page->drawText('VAT: ' . trim(strip_tags($vatId)), $this->margin['left'], $this->y, $this->encoding);
+            $page->drawText(Mage::helper('firegento_pdf')->__('VAT nr: ') . trim(strip_tags($vatId)), $this->margin['left'], $this->y, $this->encoding);
             $this->Ln(12);
         }
     }
