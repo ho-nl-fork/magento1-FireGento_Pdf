@@ -60,10 +60,15 @@ class FireGento_Pdf_Model_Engine_Shipment_Default extends FireGento_Pdf_Model_En
         // pagecounter is 0 at the beginning, because it is incremented in newPage()
         $this->pagecounter = 0;
 
+        $originalStore = Mage::app()->getStore();
+        $emulatedStore = false;
+
         foreach ($shipments as $shipment) {
             if ($shipment->getStoreId()) {
                 Mage::app()->getLocale()->emulate($shipment->getStoreId());
                 Mage::app()->setCurrentStore($shipment->getStoreId());
+
+                $emulatedStore = true;
             }
             $page = $this->newPage();
 
@@ -117,6 +122,11 @@ class FireGento_Pdf_Model_Engine_Shipment_Default extends FireGento_Pdf_Model_En
         }
 
         $this->_afterGetPdf();
+
+        if ($emulatedStore === true) {
+            Mage::app()->getLocale()->revert();
+            Mage::app()->setCurrentStore($originalStore);
+        }
 
         return $pdf;
     }
