@@ -60,10 +60,15 @@ class FireGento_Pdf_Model_Engine_Creditmemo_Default extends FireGento_Pdf_Model_
         // pagecounter is 0 at the beginning, because it is incremented in newPage()
         $this->pagecounter = 0;
 
+        $originalStore = Mage::app()->getStore();
+        $emulatedStore = false;
+
         foreach ($creditmemos as $creditmemo) {
             if ($creditmemo->getStoreId()) {
                 Mage::app()->getLocale()->emulate($creditmemo->getStoreId());
                 Mage::app()->setCurrentStore($creditmemo->getStoreId());
+
+                $emulatedStore = true;
             }
             $page = $this->newPage();
 
@@ -121,9 +126,11 @@ class FireGento_Pdf_Model_Engine_Creditmemo_Default extends FireGento_Pdf_Model_
 
         $this->_afterGetPdf();
 
-        if ($creditmemo->getStoreId()) {
+        if ($emulatedStore === true) {
             Mage::app()->getLocale()->revert();
+            Mage::app()->setCurrentStore($originalStore);
         }
+
         return $pdf;
     }
 
