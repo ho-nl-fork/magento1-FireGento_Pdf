@@ -633,9 +633,10 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
                 $order->getPayment()->getMethodInstance()->getTitle(), $page,
                 $font, 10, $width
             );
+            $firstPaymentMethodString = array_shift($paymentMethodArray);
             $page->drawText(
-                array_shift($paymentMethodArray),
-                ($this->margin['right'] - $valueRightOffset - $width), $this->y,
+                $firstPaymentMethodString,
+                ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($firstPaymentMethodString, $font, 10)), $this->y,
                 $this->encoding
             );
             $this->Ln();
