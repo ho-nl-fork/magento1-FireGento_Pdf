@@ -119,7 +119,7 @@
             <adminhtml>
                 <args>
                     <modules>
-                        <firegento_pdf before="Mage_Adminhtml">FireGento_Pdf_Adminhtml</firegento_pdf>
+                        <firegento_pdf before="Enterprise_SalesArchive_Adminhtml">FireGento_Pdf_Adminhtml</firegento_pdf>
                     </modules>
                 </args>
             </adminhtml>
