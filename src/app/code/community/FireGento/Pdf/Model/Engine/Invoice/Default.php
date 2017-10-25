@@ -58,12 +58,17 @@ class FireGento_Pdf_Model_Engine_Invoice_Default extends FireGento_Pdf_Model_Eng
         $pdf = new Zend_Pdf();
         $this->_setPdf($pdf);
 
+        $originalStore = Mage::app()->getStore();
+        $emulatedStore = false;
+
         foreach ($invoices as $invoice) {
             // pagecounter is 0 at the beginning, because it is incremented in newPage()
             $this->pagecounter = 0;
             if ($invoice->getStoreId()) {
                 Mage::app()->getLocale()->emulate($invoice->getStoreId());
                 Mage::app()->setCurrentStore($invoice->getStoreId());
+
+                $emulatedStore = true;
             }
             $order = $invoice->getOrder();
             $this->setOrder($order);
@@ -108,6 +113,11 @@ class FireGento_Pdf_Model_Engine_Invoice_Default extends FireGento_Pdf_Model_Eng
 
         $this->_afterGetPdf();
 
+        if ($emulatedStore === true) {
+            Mage::app()->getLocale()->revert();
+            Mage::app()->setCurrentStore($originalStore);
+        }
+
         return $pdf;
     }
 
@@ -129,42 +139,37 @@ class FireGento_Pdf_Model_Engine_Invoice_Default extends FireGento_Pdf_Model_Eng
         $font = $this->_setFontRegular($page, 9);
 
         $this->y -= 11;
-        $page->drawText(Mage::helper('firegento_pdf')->__('Pos'), $this->margin['left'] + 3, $this->y, $this->encoding);
-        $page->drawText(
-            Mage::helper('firegento_pdf')->__('No.'), $this->margin['left'] + 25, $this->y, $this->encoding
-        );
-        $page->drawText(
-            Mage::helper('firegento_pdf')->__('Description'), $this->margin['left'] + 130, $this->y, $this->encoding
-        );
+        $page->drawText(Mage::helper('firegento_pdf')->__('No.'), $this->margin['left'] + 3, $this->y, $this->encoding);
+        $page->drawText(Mage::helper('firegento_pdf')->__('Description'), $this->margin['left'] + 108, $this->y, $this->encoding);
 
         $columns = array();
         $columns['price'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Price'),
-            '_width' => 60
+            '_width' => 70
         );
         $columns['price_incl_tax'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Price (incl. tax)'),
-            '_width' => 60
+            '_width' => 70
         );
         $columns['qty'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Qty'),
-            '_width' => 40
+            '_width' => 20
         );
         $columns['tax'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Tax'),
             '_width' => 50
         );
         $columns['tax_rate'] = array(
-            'label'  => Mage::helper('firegento_pdf')->__('Tax rate'),
+            'label'  => Mage::helper('firegento_pdf')->__('Tax'),
             '_width' => 50
         );
         $columns['subtotal'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Total'),
-            '_width' => 50
+            '_width' => 80
         );
         $columns['subtotal_incl_tax'] = array(
             'label'  => Mage::helper('firegento_pdf')->__('Total (incl. tax)'),
-            '_width' => 70
+            '_width' => 80
         );
         // draw price, tax, and subtotal in specified order
         $columnsOrder = explode(',', Mage::getStoreConfig('sales_pdf/invoice/item_price_column_order'));

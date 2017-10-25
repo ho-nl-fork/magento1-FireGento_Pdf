@@ -219,4 +219,48 @@ class FireGento_Pdf_Model_Observer
         $renderer->draw();
         return $this;
     }
+
+	/**
+	 * Add notes to creditmemo document.
+	 *
+	 * @param $observer
+	 * @return $this
+	 */
+	public function addCreditmemoNotes($observer)
+	{
+		$this->addCreditmemoComments($observer);
+
+		return $this;
+	}
+
+	/**
+	 * Add the creditmemo comments
+	 *
+	 * @param $observer
+	 * @return $this
+	 */
+	public function addCreditmemoComments($observer)
+	{
+		if (! Mage::getStoreConfigFlag('sales_pdf/creditmemo/show_comments')) {
+			return $this;
+		}
+
+		/** @var Mage_Sales_Model_Order_Creditmemo $creditmemo */
+		$creditmemo = $observer->getCreditmemo();
+
+		/** @var Mage_Sales_Model_Resource_Order_Creditmemo_Comment_Collection $commentsCollection */
+		$commentsCollection = $creditmemo->getCommentsCollection();
+		$commentsCollection->addVisibleOnFrontFilter();
+
+		$result = $observer->getResult();
+		$notes = $result->getNotes();
+
+		foreach ($commentsCollection as $comment) {
+			/** @var $comment Mage_Sales_Model_Order_Creditmemo_Comment */
+			$notes[] = $comment->getComment();
+		}
+
+		$result->setNotes($notes);
+		return $this;
+	}
 }

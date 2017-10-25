@@ -407,6 +407,13 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
         $this->y = 692 - $this->_marginTop;
         $this->_insertCustomerAddress($page, $order);
 
+        $showShipping = Mage::getStoreConfig('sales_pdf/invoice/show_shipping_address');
+        /* Add shipping address */
+        if ($showShipping) {
+            $this->y = 780;
+            $this->insertShippingAddress($page, $order);
+        }
+
         // Add sender address
         $this->y = 705 - $this->_marginTop;
         $this->_insertSenderAddessBar($page);
@@ -432,13 +439,33 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
      */
     protected function _insertCustomerAddress(&$page, $order)
     {
+        if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
+            $this->y += 13;
+            $this->_setFontBold($page, 9);
+            $page->drawText(Mage::helper('firegento_pdf')->__('Billing address:'), $this->margin['left'], $this->y, $this->encoding);
+            $this->y -= 13;
+        }
         $this->_setFontRegular($page, 9);
         $billing = $this->_formatAddress($order->getBillingAddress()
             ->format('pdf'));
+        $alreadyPrintedVat = false;
         foreach ($billing as $line) {
+            $alreadyPrintedVat = preg_match('/^\s*VAT/', $line) === 1;
             $page->drawText(trim(strip_tags($line)),
                 $this->margin['left'] + $this->getHeaderblockOffset(), $this->y,
                 $this->encoding);
+            $this->Ln(12);
+        }
+
+        // Add VAT number, if one is available and wasn't already printed
+        $vatId = false;
+        if ($order->getBillingAddress()->getVatId()) {
+            $vatId = $order->getBillingAddress()->getVatId();
+        } elseif ($order->getCustomerTaxvat()) {
+            $vatId = $order->getBillingAddress()->getVatId();
+        }
+        if (!$alreadyPrintedVat && $vatId) {
+            $page->drawText(Mage::helper('firegento_pdf')->__('VAT nr: ') . trim(strip_tags($vatId)), $this->margin['left'], $this->y, $this->encoding);
             $this->Ln(12);
         }
     }
@@ -458,6 +485,32 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
             $offsetAdjustment = 315;
         }
         return $offsetAdjustment;
+    }
+
+    /**
+     * Insert shipping address
+     *
+     * @param object $page Current page object of Zend_Pdf
+     * @param Mage_Sales_Model_Order $order Order object
+     * @return void
+     */
+    protected function insertShippingAddress(&$page, $order)
+    {
+        if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
+            $this->y += 13;
+            $this->_setFontBold($page, 9);
+            $page->drawText(Mage::helper('firegento_pdf')->__('Shipping address:'), $this->margin['right'] - 210, $this->y, $this->encoding);
+            $this->y -= 13;
+        }
+        $this->_setFontRegular($page, 9);
+        $billing = $this->_formatAddress($order->getShippingAddress()->format('pdf'));
+        foreach ($billing as $line) {
+            if (preg_match('/^\s*VAT/', $line) === 1) {
+                continue;
+            }
+            $page->drawText(trim(strip_tags($line)), $this->margin['right'] - 210, $this->y, $this->encoding);
+            $this->Ln(12);
+        }
     }
 
     /**
@@ -489,12 +542,13 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
 
         $this->_setFontRegular($page);
 
-        $this->y += 80;
-        $labelRightOffset = 180 + $this->getHeaderblockOffset();
+        $this->y += Mage::getStoreConfig('sales_pdf/invoice/show_shipping_address') ? 64 : 112;
+        $labelRightOffset = 210;
 
-        $valueRightOffset = 10 + $this->getHeaderblockOffset();
+
+        $valueRightOffset = 0;
         $font = $this->_setFontRegular($page, 10);
-        $width = 80;
+        $width = 110;
         $numberOfLines = 0;
 
 
@@ -536,6 +590,14 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
                         $putOrderId, $font, 10
                     )), $this->y, $this->encoding
             );
+            $this->Ln();
+            $numberOfLines++;
+        }
+
+        // Purchase Order Number
+        if ($order->getPurchaseOrder()) {
+            $page->drawText(Mage::helper('firegento_pdf')->__('Customer PO number:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
+            $page->drawText($order->getPurchaseOrder(), ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($putOrderId, $font, 10)), $this->y, $this->encoding);
             $this->Ln();
             $numberOfLines++;
         }
@@ -690,6 +752,23 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
             }
 
         }
+
+        // Payment term
+        if (Mage::helper('core')->isModuleEnabled('Ho_MentalSuits')) {
+            $page->drawText(Mage::helper('firegento_pdf')->__('Payment term:'), ($this->margin['right'] - $labelRightOffset), $this->y, $this->encoding);
+            if (!is_null($order->getPaymentTerm())) {
+                $paymentTerm = Mage::helper('ho_mentalsuits')->getPaymenttermLabelForDays($order->getPaymentTerm());
+            } else {
+                $paymentTerm = Mage::helper('ho_mentalsuits')->getPaymenttermLabelForDays(
+                    Mage::getModel('customer/customer')->load($order->getCustomerId())->getPaymentTerm()
+                );
+            }
+            $font = $this->_setFontRegular($page, 10);
+            $page->drawText($paymentTerm, ($this->margin['right'] - $valueRightOffset - $this->widthForStringUsingFontSize($paymentTerm, $font, 10)), $this->y, $this->encoding);
+            $this->Ln();
+            $numberOfLines++;
+        }
+
         $this->y -= ($numberOfLines * 2);
     }
 
@@ -864,7 +943,11 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
             $total->setOrder($order)->setSource($source);
 
             if ($total->canDisplay()) {
-                $total->setFontSize(10);
+                if ($total instanceof Mage_Tax_Model_Sales_Pdf_Tax) {
+                    $total->setFontSize(8);
+                } else {
+                    $total->setFontSize(10);
+                }
                 // fix Magento 1.8 bug, so that taxes for shipping do not appear twice
                 // see https://github.com/firegento/firegento-pdf/issues/106
                 $uniqueTotalsForDisplay = array_map(
@@ -923,7 +1006,7 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
         $notes = array_merge($notes, $result->getNotes());
 
         // Get free text notes.
-        $note = Mage::getStoreConfig('sales_pdf/' . $this->getMode() . '/note');
+        $note = $this->_getNote($order);
         if (!empty($note)) {
             $tmpNotes = explode("\n", $note);
             $notes = array_merge($notes, $tmpNotes);
@@ -949,6 +1032,24 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
             }
         }
         return $page;
+    }
+
+    /**
+     * @param Mage_Sales_Model_Order $order
+     * @return string
+     */
+    protected function _getNote($order)
+    {
+        $roleNotes = Mage::getStoreConfig('sales_pdf/' . $this->getMode() . '/role_note', $order->getStoreId());
+        $roleNotes = unserialize($roleNotes);
+        if (is_array($roleNotes)) {
+            foreach ($roleNotes as $roleNote) {
+                if ($roleNote['role_id'] == $order->getData('created_by_role')) {
+                    return $roleNote['note'];
+                }
+            }
+        }
+        return Mage::getStoreConfig('sales_pdf/' . $this->getMode() . '/note');
     }
 
     /**
@@ -1029,13 +1130,14 @@ abstract class FireGento_Pdf_Model_Engine_Abstract
             'vat_id'          => Mage::helper('firegento_pdf')->__('VAT-ID:'),
             'register_number' => Mage::helper('firegento_pdf')
                 ->__('Register number:'),
+            'au_abn'          => Mage::helper('firegento_pdf')->__('ABN:'),
             'ceo'             => Mage::helper('firegento_pdf')->__('CEO:'),
             'city'            => Mage::helper('firegento_pdf')
                 ->__('Registered seat:'),
             'court'           => Mage::helper('firegento_pdf')
                 ->__('Register court:'),
         );
-        $this->_insertFooterBlock($page, $fields, 355, 60,
+        $this->_insertFooterBlock($page, $fields, 385, 60,
             $this->margin['right'] - 365 - 10);
     }
 

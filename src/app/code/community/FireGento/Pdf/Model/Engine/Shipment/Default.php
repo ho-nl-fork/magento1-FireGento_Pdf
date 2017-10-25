@@ -60,12 +60,17 @@ class FireGento_Pdf_Model_Engine_Shipment_Default
         $pdf = new Zend_Pdf();
         $this->_setPdf($pdf);
 
+        $originalStore = Mage::app()->getStore();
+        $emulatedStore = false;
+
         foreach ($shipments as $shipment) {
             // pagecounter is 0 at the beginning, because it is incremented in newPage()
             $this->pagecounter = 0;
             if ($shipment->getStoreId()) {
                 Mage::app()->getLocale()->emulate($shipment->getStoreId());
                 Mage::app()->setCurrentStore($shipment->getStoreId());
+
+                $emulatedStore = true;
             }
             $order = $shipment->getOrder();
             $this->setOrder($order);
@@ -106,6 +111,11 @@ class FireGento_Pdf_Model_Engine_Shipment_Default
         }
 
         $this->_afterGetPdf();
+
+        if ($emulatedStore === true) {
+            Mage::app()->getLocale()->revert();
+            Mage::app()->setCurrentStore($originalStore);
+        }
 
         return $pdf;
     }
@@ -176,6 +186,13 @@ class FireGento_Pdf_Model_Engine_Shipment_Default
      */
     protected function insertShippingAddress($page, $order)
     {
+        if (Mage::getStoreConfig('sales_pdf/invoice/show_address_headings')) {
+            $this->y += 13;
+            $this->_setFontBold($page, 9);
+            $page->drawText(Mage::helper('firegento_pdf')->__('Billing address:'), $this->margin['left'], $this->y, $this->encoding);
+            $this->y -= 13;
+        }
+
         $this->_setFontRegular($page, 9);
 
         $billing = $this->_formatAddress($order->getShippingAddress()

@@ -73,8 +73,8 @@
 "Show Item Discount","Toon korting van item"
 "You get a discount of %s.","U krijg een korting van %s."
 "Tax amount",BTW-bedrag
-"Price (incl. tax)","Prijs (Excl. BTW)"
-"Subtotal (incl. tax)","Subtotaal (Excl. BTW)"
+"Price (incl. tax)","Prijs (Inc BTW)"
+"Subtotal (incl. tax)","Subtotaal (Ex BTW)"
 "Order of price columns of items","Volgorde van de prijs-kolommen van items"
 "Define the order by moving the following items using your mouse:","Stel de volgorde in door deze met uw muis te verslepen"
 "Tax rate",BTW-bedrag
